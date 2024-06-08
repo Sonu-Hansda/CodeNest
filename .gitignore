@@ -1,0 +1,4 @@
+venv/
+tests/
+api/test.db
+api/**/__pycache__
