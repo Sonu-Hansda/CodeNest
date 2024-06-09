@@ -26,7 +26,7 @@ class ProblemCreate(BaseModel):
     title: str
     description: str
     code: str
-    author_id: int
+    point: int
     test_cases: List[TestCaseCreate] = Field(default_factory=list)
 
 class ProblemResponse(BaseModel):

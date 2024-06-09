@@ -1,15 +1,15 @@
-from jose import JWTError
-from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi import FastAPI, Depends
+from typing import List
+from schemas import UserResponse
+from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from fastapi.middleware.cors import CORSMiddleware
 from routes import UserRouter, ProblemRouter
 from database import Base, engine, get_db
-from models import User, Problem
-from schemas import Token
-from sqlalchemy.orm import Session
-from utils import create_access_token,verify_access_token
+from models import User
 
-app = FastAPI()
 Base.metadata.create_all(bind=engine)
+app = FastAPI()
 
 # CORS middleware to allow requests from frontend origins
 app.add_middleware(
@@ -20,24 +20,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# JWT token validation middleware
-async def jwt_authentication(request: Request):
-    try:
-        token = request.headers["Authorization"].split("Bearer ")[1]
-        payload = verify_access_token(token)
-        # Add user data to request state for use in route handlers
-        request.state.user = payload
-    except (KeyError, JWTError, IndexError):
-        raise HTTPException(
-            status_code=401,
-            detail="Could not validate credentials",
-        )
-    return request
-
-@app.get("/protected")
-def protected(request: Request = Depends(jwt_authentication)):
-    user = request.state.user
-    return {"message":"This is a protected endpoint","user":user}
-
+# Get leaderboard
+@app.get("/api/leaderboard",response_model=List[UserResponse])
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(User).order_by(desc(User.score)).all()
+    if users is None:
+        return []
+    return users
 app.include_router(UserRouter,prefix="/api/account")
 app.include_router(ProblemRouter,prefix="/api/problems")

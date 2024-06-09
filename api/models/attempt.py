@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, Boolean, DateTime
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from utils import GenUniqueID
 from database import Base
@@ -11,6 +12,8 @@ class Attempt(Base):
     problem_id = Column(Integer, ForeignKey('problems.id'))
     passed = Column(Boolean, nullable=False)
     created_at = Column(DateTime, default=func.now())
+    user = relationship("User", back_populates="attempts")
+    problem = relationship("Problem", back_populates="attempts")
     modified_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
     def __init__(self, user_id, problem_id, passed):

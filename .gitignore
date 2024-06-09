@@ -1,4 +1,11 @@
+# Root Files
 venv/
 tests/
+
+# Backend Files
 api/test.db
 api/**/__pycache__
+
+# Frontend Files
+frontend/node_modules
+frontend/.env
