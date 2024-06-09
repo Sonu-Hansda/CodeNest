@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from utils import GenUniqueID
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from database import Base
 from passlib.context import CryptContext
 
@@ -13,7 +14,11 @@ class User(Base):
     username = Column(String,unique=True,index=True)
     email = Column(String,unique=True,index=True)
     hashed_password = Column(String)
+    score = Column(Integer, default=0)
     problems = relationship("Problem",back_populates="author")
+    attempts = relationship("Attempt", back_populates="user")
+    created_at = Column(DateTime, default=func.now())
+    modified_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
     def __init__(self,username,email,password):
         self.username = username
@@ -23,7 +28,7 @@ class User(Base):
 
     def set_id(self):
         return GenUniqueID()
-    
+
     @staticmethod
     def hash_password(password):
         return pwd_context.hash(password)
