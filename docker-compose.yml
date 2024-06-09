@@ -8,8 +8,6 @@ services:
       - "8000:8000"
     volumes:
       - ./api:/app
-    env_file:
-      - .env
 
   frontend:
     build:
@@ -20,3 +18,4 @@ services:
       - ./frontend:/app
     environment:
       - NODE_ENV=production
+      - VITE_API_URL=http://backend:8000/api
