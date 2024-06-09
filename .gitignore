@@ -3,6 +3,8 @@ venv/
 tests/
 
 # Backend Files
+api/tests/
+api/venv/
 api/test.db
 api/**/__pycache__
 
